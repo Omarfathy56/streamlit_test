@@ -1,42 +1,21 @@
+import pandas
 import pandas as pd
 import numpy as np
 import streamlit as st
-
-DATE_COLUMN = 'date/time'
-DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
-            'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
-
-st.title("hello this is my data")
+import plotly as px
 
 
 @st.cache_data
-def load_data(nrows):
-    data = pd.read_csv(DATA_URL, nrows=nrows)
-    lowercase = lambda x: str(x).lower()
-    data.rename(lowercase, axis='columns', inplace=True)
-    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
-    return data
+def load_data():
+    df = pandas.read_csv("imdb_top_1000.csv")
+    df.columns = df.columns.str.lower()
+    df.drop(["certificate"], axis=1, inplace=True)
+    return df
 
 
-# Create a text element and let the reader know the data is loading.
-data_load_state = st.text('Loading data...')
-# Load 10,000 rows of data into the dataframe.
-data = load_data(1000)
-# Notify the reader that the data was successfully loaded.
-data_load_state.text('Loading data...done!')
+st.title("IMDB Movies")
 
-if st.checkbox('Show raw data'):
-    st.subheader('Raw data')
-    st.write(data)
-
-st.subheader('Number of pickups by hour')
-
-hist_values = np.histogram(
-    data[DATE_COLUMN].dt.hour, bins=24, range=(0, 24))[0]
-
-st.bar_chart(hist_values)
-
-st.subheader("Map of all pickups")
-hour_to_filter = st.slider('hour', 0, 23, 17)
-filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
-st.map(filtered_data)
+df = load_data()
+st.write(df)
+print(df.info())
+print(df.isnull().mean()*100)
