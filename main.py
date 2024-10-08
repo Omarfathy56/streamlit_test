@@ -22,7 +22,6 @@ st.sidebar.markdown("my linked in account : [www.linkedin.com/in/omar-fathy-1708
 st.title("IMDB Top 1000 Movies")
 
 df = load_data()
-st.write(df)
 
 # creating a container with the logo of imdb and intro to the app
 
